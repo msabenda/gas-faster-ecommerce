@@ -24,7 +24,6 @@
     </style>
 </head>
 <body class="bg-gray-50">
-    <!-- Navigation (unchanged) -->
     <nav class="bg-white shadow-lg sticky top-0 z-40">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
@@ -82,7 +81,6 @@
         </div>
     </nav>
 
-    <!-- Toast Notification -->
     @if (session('success'))
         <div class="toast bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg">
             {{ session('success') }}
@@ -96,10 +94,8 @@
         </div>
     @endif
 
-    <!-- Main Content -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div class="flex flex-col md:flex-row gap-8">
-            <!-- Account Navigation (unchanged) -->
             <aside class="md:w-1/4">
                 <div class="bg-white rounded-lg shadow-sm overflow-hidden">
                     <div class="p-6 border-b border-gray-200">
@@ -136,15 +132,12 @@
                 </div>
             </aside>
 
-            <!-- Main Dashboard -->
             <main class="md:w-3/4 space-y-8">
-                <!-- Welcome Card (unchanged) -->
                 <div class="bg-white rounded-lg shadow-sm p-6 animate-fade-in">
                     <h2 class="text-2xl font-bold text-gray-900">Welcome, {{ Auth::user()->name }}!</h2>
                     <p class="text-gray-600 mt-1">Manage your account, browse products, and track your orders.</p>
                 </div>
 
-                <!-- Products Section (unchanged) -->
                 <section id="products" class="bg-white rounded-lg shadow-sm p-6 animate-fade-in">
                     <div class="flex justify-between items-center mb-6">
                         <h3 class="text-xl font-bold text-gray-900">Products</h3>
@@ -162,7 +155,7 @@
                                 <div class="p-4">
                                     <h4 class="text-lg font-semibold text-gray-900 truncate">{{ $product->name }}</h4>
                                     <p class="text-sm text-gray-500">{{ $product->size }}</p>
-                                    <p class="text-lg font-bold text-gray-900 mt-1">{{ number_format($product->price, 2) }} TZS</p>
+                                    <p class="text-lg font-bold text-gray-900 mt-1">{{ number_format($product->price, 2) }} TZS (~${{ number_format($product->price / config('paypal.exchange_rate_tzs_to_usd', 2700), 2) }})</p>
                                     <form action="{{ route('cart.add') }}" method="POST" class="mt-4 add-to-cart">
                                         @csrf
                                         <input type="hidden" name="product_id" value="{{ $product->id }}">
@@ -176,7 +169,6 @@
                     </div>
                 </section>
 
-                <!-- Cart Section -->
                 <section id="cart" class="bg-white rounded-lg shadow-sm p-6 animate-fade-in">
                     <h3 class="text-xl font-bold text-gray-900 mb-6">Your Cart</h3>
                     @if ($cartItems->isEmpty())
@@ -206,7 +198,7 @@
                                                 <span>{{ $item->product->name }}</span>
                                             </td>
                                             <td class="p-4">{{ $item->product->size }}</td>
-                                            <td class="p-4">{{ number_format($item->product->price, 2) }} TZS</td>
+                                            <td class="p-4">{{ number_format($item->product->price, 2) }} TZS (~${{ number_format($item->product->price / config('paypal.exchange_rate_tzs_to_usd', 2700), 2) }})</td>
                                             <td class="p-4">
                                                 <div class="flex items-center space-x-2">
                                                     <button type="button" class="update-quantity bg-gray-200 text-gray-600 px-2 py-1 rounded hover:bg-gray-300" data-id="{{ $item->id }}" data-action="decrement">-</button>
@@ -214,7 +206,7 @@
                                                     <button type="button" class="update-quantity bg-gray-200 text-gray-600 px-2 py-1 rounded hover:bg-gray-300" data-id="{{ $item->id }}" data-action="increment">+</button>
                                                 </div>
                                             </td>
-                                            <td class="p-4">{{ number_format($item->product->price * $item->quantity, 2) }} TZS</td>
+                                            <td class="p-4">{{ number_format($item->product->price * $item->quantity, 2) }} TZS (~${{ number_format(($item->product->price * $item->quantity) / config('paypal.exchange_rate_tzs_to_usd', 2700), 2) }})</td>
                                             <td class="p-4 text-right">
                                                 <form action="{{ route('cart.remove', $item->id) }}" method="POST" class="remove-from-cart">
                                                     @csrf
@@ -227,17 +219,19 @@
                                 </tbody>
                             </table>
                             <div class="p-4 bg-gray-50 flex justify-between items-center">
-                                <span class="text-lg font-semibold text-gray-900">Total: {{ number_format($cartItems->sum(fn($item) => $item->product->price * $item->quantity), 2) }} TZS</span>
+                                <span class="text-lg font-semibold text-gray-900">
+                                    Total: {{ number_format($cartItems->sum(fn($item) => $item->product->price * $item->quantity), 2) }} TZS
+                                    (~${{ number_format($cartItems->sum(fn($item) => $item->product->price * $item->quantity) / config('paypal.exchange_rate_tzs_to_usd', 2700), 2) }})
+                                </span>
                                 <form action="{{ route('payment.checkout') }}" method="POST" class="initiate-checkout">
                                     @csrf
-                                    <button type="submit" class="bg-black text-white px-6 py-2 rounded-md hover:bg-gray-800">Proceed to Checkout</button>
+                                    <button type="submit" class="bg-black text-white px-6 py-2 rounded-md hover:bg-gray-800">Pay with PayPal</button>
                                 </form>
                             </div>
                         </div>
                     @endif
                 </section>
 
-                <!-- Profile Section (unchanged) -->
                 <section id="profile" class="bg-white rounded-lg shadow-sm p-6 animate-fade-in">
                     <h3 class="text-xl font-bold text-gray-900 mb-6">Your Profile</h3>
                     <form action="{{ route('profile.update') }}" method="POST" class="max-w-lg">
@@ -273,7 +267,6 @@
         </div>
     </div>
 
-    <!-- Footer (unchanged) -->
     <footer class="bg-gray-900 text-gray-300 py-8">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -302,12 +295,10 @@
     </footer>
 
     <script>
-        // Mobile Menu Toggle
         $('#mobile-menu-btn').click(function () {
             $('#mobile-menu').toggleClass('hidden');
         });
 
-        // Update Cart Count
         function updateCartCount() {
             $.get('{{ route('cart.count') }}', function (data) {
                 $('.cart-badge').text(data.count).addClass('updated');
@@ -315,7 +306,6 @@
             });
         }
 
-        // Handle Add to Cart
         $('.add-to-cart').submit(function (e) {
             e.preventDefault();
             $.ajax({
@@ -333,7 +323,6 @@
             });
         });
 
-        // Handle Remove from Cart
         $('.remove-from-cart').submit(function (e) {
             e.preventDefault();
             $.ajax({
@@ -351,7 +340,6 @@
             });
         });
 
-        // Handle Quantity Update
         $('.update-quantity').click(function () {
             const id = $(this).data('id');
             const action = $(this).data('action');
@@ -370,37 +358,36 @@
             });
         });
 
-        // Handle Checkout
         $('.initiate-checkout').submit(function (e) {
             e.preventDefault();
+            console.log('Checkout form data:', $(this).serialize());
             $.ajax({
                 url: $(this).attr('action'),
                 type: 'POST',
                 data: $(this).serialize(),
                 success: function (response) {
+                    console.log('Checkout response:', response);
                     if (response.checkout_url) {
                         window.location.href = response.checkout_url;
                     } else {
-                        showToast('Failed to initiate checkout.', 'bg-red-600');
+                        showToast(response.error || 'Failed to initiate checkout.', 'bg-red-600');
                     }
                 },
-                error: function () {
+                error: function (xhr) {
+                    console.log('Checkout error:', xhr.status, xhr.responseText);
                     showToast('Checkout error. Please try again.', 'bg-red-600');
                 }
             });
         });
 
-        // Toast Notification
         function showToast(message, bgClass) {
             const toast = $(`<div class="toast ${bgClass} text-white px-4 py-2 rounded-lg shadow-lg">${message}</div>`);
             $('body').append(toast);
             setTimeout(() => toast.fadeOut('slow', () => toast.remove()), 3000);
         }
 
-        // Auto-hide session toast
         setTimeout(() => $('.toast').fadeOut('slow', () => $('.toast').remove()), 3000);
 
-        // Update active nav item
         $(document).ready(function () {
             const hash = window.location.hash || '#dashboard';
             $('.account-nav-item').removeClass('active');
