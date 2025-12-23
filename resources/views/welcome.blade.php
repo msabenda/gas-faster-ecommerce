@@ -156,7 +156,7 @@
     <!-- Hero Section with Background Image -->
     <section class="hero-section py-32 text-white">
         <div class="container mx-auto px-4 hero-content text-center">
-            <h2 class="text-4xl md:text-5xl font-bold mb-6 leading-tight fade-in">Fast Gas Cylinder Delivery</h2>
+            <h2 class="text-4xl md:text-5xl font-bold mb-6 leading-tight fade-in">Gas chap Cylinder Delivery</h2>
             <p class="text-xl mb-8 opacity-90 max-w-2xl mx-auto fade-in">We deliver quality gas products quickly and safely to your location.</p>
             <div class="flex flex-col sm:flex-row justify-center space-y-3 sm:space-y-0 sm:space-x-4 fade-in">
                 <a href="@guest {{ route('register') }} @else {{ route('home') }}#products @endguest" class="bg-white text-black px-8 py-3 rounded-lg font-medium hover:bg-gray-100 transition shadow-md">Order Now</a>
