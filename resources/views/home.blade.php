@@ -306,22 +306,27 @@
             });
         }
 
-        $('.add-to-cart').submit(function (e) {
-            e.preventDefault();
-            $.ajax({
-                url: $(this).attr('action'),
-                type: 'POST',
-                data: $(this).serialize(),
-                success: function () {
-                    updateCartCount();
-                    showToast('Product added to cart!', 'bg-green-600');
-                    window.location.hash = 'cart';
-                },
-                error: function () {
-                    showToast('Failed to add product.', 'bg-red-600');
-                }
-            });
-        });
+        $('.add-to-cart').submit(function (e) 
+    e.preventDefault();
+    $.ajax({
+        url: $(this).attr('action'),
+        type: 'POST',
+        data: $(this).serialize(),
+        success: function () {
+            updateCartCount();
+            showToast('Product added to cart!', 'bg-green-600');
+            
+            // ────────────────────────────────────────
+            // Add this line – scroll to cart + reload to show new item
+            // Alternative: window.location.href = '{{ route("home") }}#cart';
+            location.reload();   // ← most straightforward fix
+            // ────────────────────────────────────────
+        },
+        error: function () {
+            showToast('Failed to add product.', 'bg-red-600');
+        }
+    });
+});
 
         $('.remove-from-cart').submit(function (e) {
             e.preventDefault();
